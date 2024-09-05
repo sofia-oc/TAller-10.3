@@ -1,33 +1,50 @@
-var array = []
+const itemParaAgregar = document.getElementById("item");
+const btnAgregar = document.getElementById("agregar");
+const btnLimpiar = document.getElementById("limpiar");
+const contenedor = document.getElementById("contenedor");
+let listaDeItems = JSON.parse(localStorage.getItem("ListaItems")) || []; 
 
-document.addEventListener('DOMContentLoaded', function(){
-    let btn = document.getElementById("agregar");
-    let contenedor = document.getElementById("contenedor");
 
-        btn.addEventListener('click', function(){
-            let item = document.getElementById("item").value;
+// Función que actualiza el contenido de la lista
+function actualizar() {
+    contenedor.innerHTML = ""; 
     
-            array.push(item);
-            console.log(array);
-    
-            let lista = JSON.stringify(array);
-            localStorage.setItem("TodaLista", lista);
+    // Recorre la lista de items y los agrega al contenedor como elementos 'li'
+    listaDeItems.forEach(element => {
+        const li = document.createElement("li");
 
-
-            let htmlContentToAppend = "";
-            array.forEach(element => {
-        
-                htmlContentToAppend += `
-                <li>` + element + `</li>`
-
-                contenedor.innerHTML = htmlContentToAppend;
-            });
-        });
-
-
-    let limpiar = document.getElementById("limpiar");
-    limpiar.addEventListener('click', function(){
-
+        li.textContent = element;
+        contenedor.appendChild(li);
     });
+}
 
-})
+// Función para agregar un nuevo item a la lista
+function agregar() {
+    const nuevoItem = itemParaAgregar.value;
+    
+    // Agrega el nuevo item a la lista y actualiza el localStorage
+    listaDeItems.push(nuevoItem);
+    localStorage.setItem("ListaItems", JSON.stringify(listaDeItems));
+        
+    actualizar();
+    
+    // Limpia el input después de agregar el item
+    itemParaAgregar.value = "";
+}
+
+// Función para limpiar la lista
+function limpiar() {
+
+    localStorage.removeItem("ListaItems"); // Elimina la lista del localStorage
+    listaDeItems = []; // Vacia la lista en memoria
+    
+    actualizar(); 
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    
+    btnAgregar.addEventListener("click", agregar);
+    btnLimpiar.addEventListener("click", limpiar);
+    actualizar();
+
+});
